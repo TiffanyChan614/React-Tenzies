@@ -8,10 +8,10 @@ export default function App() {
 	const [dice, setDice] = React.useState(allNewDice())
 	const [tenzies, setTenzies] = React.useState(false)
 	const [currentStats, setCurrentStats] = React.useState({ rolls: 1, time: 0 })
-	const [bestStats, setBestStats] = React.useState({
-		rolls: Number(localStorage.getItem('bestRoll')) || null,
-		time: Number(localStorage.getItem('bestTime')) || null,
-	})
+	const [bestStats, setBestStats] = React.useState(
+		JSON.parse(localStorage.getItem('bestStats')) || { rolls: null, time: null }
+	)
+	const [newBest, setNewBest] = React.useState(false)
 
 	React.useEffect(() => {
 		const allHeld = dice.every((die) => die.isHeld)
@@ -32,6 +32,35 @@ export default function App() {
 			}, 100)
 		}
 	}, [currentStats.time])
+
+	React.useEffect(() => {
+		console.log('tenzies change to', tenzies)
+		if (tenzies) {
+			console.log('updating')
+			let bestRolls = bestStats.rolls
+			let bestTime = bestStats.time
+			let newBest = false
+			if (bestRolls === null && bestTime === null) {
+				newBest = true
+			} else if (bestRolls > currentStats.rolls) {
+				newBest = true
+			} else if (
+				bestRolls === currentStats.rolls &&
+				bestTime > currentStats.time
+			) {
+				newBest = true
+			}
+			console.log('newBest', newBest)
+			setNewBest(newBest)
+			if (newBest) {
+				localStorage.setItem(
+					'bestStats',
+					JSON.stringify(Object.assign({}, currentStats))
+				)
+				setBestStats(Object.assign({}, currentStats))
+			}
+		}
+	}, [tenzies])
 
 	function generateNewDie() {
 		return {
@@ -61,22 +90,10 @@ export default function App() {
 				time: oldStats.time,
 			}))
 		} else {
-			let bestRolls = bestStats.rolls
-			let bestTime = bestStats.time
-			if (bestRolls === null || currentStats.rolls < bestRolls) {
-				bestRolls = currentStats.rolls
-			}
-			if (bestTime === null || currentStats.time < bestTime) {
-				bestTime = currentStats.time
-			}
-
-			const newBestStats = { rolls: bestRolls, time: bestTime }
-			localStorage.setItem('bestStats', newBestStats)
-			setBestStats(newBestStats)
-
 			setTenzies(false)
 			setDice(allNewDice())
 			setCurrentStats({ rolls: 1, time: 0 })
+			setNewBest(false)
 		}
 	}
 
@@ -107,6 +124,7 @@ export default function App() {
 				Roll until all dice are the same. Click each die to freeze it at its
 				current value between rolls.
 			</p>
+			{newBest && <h3>New Best!</h3>}
 			<Stats
 				currentStats={currentStats}
 				bestStats={bestStats}
