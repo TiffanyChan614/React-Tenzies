@@ -535,6 +535,7 @@ function App() {
 			setDice(allNewDice());
 			setCurrentStats({ rolls: 1, time: 0 });
 			setNewBest(false);
+			setStartTime(Date.now());
 		}
 	}
 
