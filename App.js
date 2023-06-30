@@ -6,13 +6,17 @@ import Stats from './Stats'
 
 export default function App() {
 	const [dice, setDice] = React.useState(allNewDice())
-	const [startTime, setStartTime] = React.useState(Date.now())
+	const [startTime, setStartTime] = React.useState(null)
 	const [tenzies, setTenzies] = React.useState(false)
-	const [currentStats, setCurrentStats] = React.useState({ rolls: 1, time: 0 })
+	const [currentStats, setCurrentStats] = React.useState({
+		rolls: null,
+		time: null,
+	})
 	const [bestStats, setBestStats] = React.useState(
 		JSON.parse(localStorage.getItem('bestStats')) || { rolls: null, time: null }
 	)
 	const [newBest, setNewBest] = React.useState(false)
+	const [firstStart, setFirstStart] = React.useState(true)
 
 	React.useEffect(() => {
 		const allHeld = dice.every((die) => die.isHeld)
@@ -26,7 +30,7 @@ export default function App() {
 	React.useEffect(() => {
 		let intervalId = null
 
-		if (!tenzies) {
+		if (!tenzies && !firstStart) {
 			intervalId = setInterval(() => {
 				setCurrentStats((oldStats) => ({
 					rolls: oldStats.rolls,
@@ -80,8 +84,16 @@ export default function App() {
 		return newDice
 	}
 
+	function resetGame() {
+		setTenzies(false)
+		setDice(allNewDice())
+		setCurrentStats({ rolls: 1, time: 0 })
+		setNewBest(false)
+		setStartTime(Date.now())
+	}
+
 	function rollDice() {
-		if (!tenzies) {
+		if (!tenzies && !firstStart) {
 			setDice((oldDice) =>
 				oldDice.map((die) => {
 					return die.isHeld ? die : generateNewDie()
@@ -91,12 +103,11 @@ export default function App() {
 				rolls: oldStats.rolls + 1,
 				time: oldStats.time,
 			}))
+		} else if (firstStart) {
+			setFirstStart(false)
+			resetGame()
 		} else {
-			setTenzies(false)
-			setDice(allNewDice())
-			setCurrentStats({ rolls: 1, time: 0 })
-			setNewBest(false)
-			setStartTime(Date.now())
+			resetGame()
 		}
 	}
 
@@ -116,8 +127,19 @@ export default function App() {
 			value={die.value}
 			isHeld={die.isHeld}
 			holdDice={() => holdDice(die.id)}
+			active={!firstStart}
 		/>
 	))
+
+	let buttonText = ''
+
+	if (firstStart) {
+		buttonText = 'Start'
+	} else if (tenzies) {
+		buttonText = 'New Game'
+	} else {
+		buttonText = 'Roll'
+	}
 
 	return (
 		<main>
@@ -136,7 +158,7 @@ export default function App() {
 			<button
 				className='roll-dice'
 				onClick={rollDice}>
-				{tenzies ? 'New Game' : 'Roll'}
+				{buttonText}
 			</button>
 		</main>
 	)

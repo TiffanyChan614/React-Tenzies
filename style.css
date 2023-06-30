@@ -53,6 +53,9 @@ main {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+
+.die-face.active {
 	cursor: pointer;
 }
 

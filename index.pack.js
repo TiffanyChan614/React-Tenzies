@@ -424,7 +424,7 @@ function App() {
 	    dice = _React$useState2[0],
 	    setDice = _React$useState2[1];
 
-	var _React$useState3 = _react2.default.useState(Date.now()),
+	var _React$useState3 = _react2.default.useState(null),
 	    _React$useState4 = _slicedToArray(_React$useState3, 2),
 	    startTime = _React$useState4[0],
 	    setStartTime = _React$useState4[1];
@@ -434,7 +434,10 @@ function App() {
 	    tenzies = _React$useState6[0],
 	    setTenzies = _React$useState6[1];
 
-	var _React$useState7 = _react2.default.useState({ rolls: 1, time: 0 }),
+	var _React$useState7 = _react2.default.useState({
+		rolls: null,
+		time: null
+	}),
 	    _React$useState8 = _slicedToArray(_React$useState7, 2),
 	    currentStats = _React$useState8[0],
 	    setCurrentStats = _React$useState8[1];
@@ -448,6 +451,11 @@ function App() {
 	    _React$useState12 = _slicedToArray(_React$useState11, 2),
 	    newBest = _React$useState12[0],
 	    setNewBest = _React$useState12[1];
+
+	var _React$useState13 = _react2.default.useState(true),
+	    _React$useState14 = _slicedToArray(_React$useState13, 2),
+	    firstStart = _React$useState14[0],
+	    setFirstStart = _React$useState14[1];
 
 	_react2.default.useEffect(function () {
 		var allHeld = dice.every(function (die) {
@@ -465,7 +473,7 @@ function App() {
 	_react2.default.useEffect(function () {
 		var intervalId = null;
 
-		if (!tenzies) {
+		if (!tenzies && !firstStart) {
 			intervalId = setInterval(function () {
 				setCurrentStats(function (oldStats) {
 					return {
@@ -517,8 +525,16 @@ function App() {
 		return newDice;
 	}
 
+	function resetGame() {
+		setTenzies(false);
+		setDice(allNewDice());
+		setCurrentStats({ rolls: 1, time: 0 });
+		setNewBest(false);
+		setStartTime(Date.now());
+	}
+
 	function rollDice() {
-		if (!tenzies) {
+		if (!tenzies && !firstStart) {
 			setDice(function (oldDice) {
 				return oldDice.map(function (die) {
 					return die.isHeld ? die : generateNewDie();
@@ -530,12 +546,11 @@ function App() {
 					time: oldStats.time
 				};
 			});
+		} else if (firstStart) {
+			setFirstStart(false);
+			resetGame();
 		} else {
-			setTenzies(false);
-			setDice(allNewDice());
-			setCurrentStats({ rolls: 1, time: 0 });
-			setNewBest(false);
-			setStartTime(Date.now());
+			resetGame();
 		}
 	}
 
@@ -554,9 +569,20 @@ function App() {
 			isHeld: die.isHeld,
 			holdDice: function holdDice() {
 				return _holdDice(die.id);
-			}
+			},
+			active: !firstStart
 		});
 	});
+
+	var buttonText = '';
+
+	if (firstStart) {
+		buttonText = 'Start';
+	} else if (tenzies) {
+		buttonText = 'New Game';
+	} else {
+		buttonText = 'Roll';
+	}
 
 	return _react2.default.createElement(
 		'main',
@@ -591,7 +617,7 @@ function App() {
 			{
 				className: 'roll-dice',
 				onClick: rollDice },
-			tenzies ? 'New Game' : 'Roll'
+			buttonText
 		)
 	);
 }
@@ -650,7 +676,7 @@ if (process.env.NODE_ENV === 'production') {
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+	value: true
 });
 exports.default = Die;
 
@@ -661,22 +687,22 @@ var _react2 = _interopRequireDefault(_react);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function Die(props) {
-    var styles = {
-        backgroundColor: props.isHeld ? "#59E391" : "white"
-    };
-    return _react2.default.createElement(
-        "div",
-        {
-            className: "die-face",
-            style: styles,
-            onClick: props.holdDice
-        },
-        _react2.default.createElement(
-            "h2",
-            { className: "die-num" },
-            props.value
-        )
-    );
+	var styles = {
+		backgroundColor: props.isHeld && props.active ? '#59E391' : 'white'
+	};
+
+	return _react2.default.createElement(
+		'div',
+		{
+			className: props.active ? 'die-face active' : 'die-face',
+			style: styles,
+			onClick: props.holdDice },
+		_react2.default.createElement(
+			'h2',
+			{ className: 'die-num' },
+			props.value
+		)
+	);
 }
 
 /***/ }),
@@ -732,7 +758,7 @@ function Stats(props) {
 				_react2.default.createElement(
 					'div',
 					null,
-					props.currentStats.rolls
+					!props.currentStats.rolls ? '--' : props.currentStats.rolls
 				),
 				_react2.default.createElement(
 					'div',
@@ -772,8 +798,7 @@ function Stats(props) {
 				_react2.default.createElement(
 					'div',
 					null,
-					(props.currentStats.time / 1000).toFixed(2),
-					's'
+					!props.currentStats.time ? '--' : (props.currentStats.time / 1000).toFixed(2) + 's'
 				),
 				_react2.default.createElement(
 					'div',
