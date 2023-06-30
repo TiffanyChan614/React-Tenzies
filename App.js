@@ -10,10 +10,13 @@ export default function App() {
 	const [tenzies, setTenzies] = React.useState(false)
 	const [currentStats, setCurrentStats] = React.useState({
 		rolls: null,
-		time: null,
+		secondPassed: null,
 	})
 	const [bestStats, setBestStats] = React.useState(
-		JSON.parse(localStorage.getItem('bestStats')) || { rolls: null, time: null }
+		JSON.parse(localStorage.getItem('bestStats')) || {
+			rolls: null,
+			secondPassed: null,
+		}
 	)
 	const [newBest, setNewBest] = React.useState(false)
 	const [firstStart, setFirstStart] = React.useState(true)
@@ -34,7 +37,7 @@ export default function App() {
 			intervalId = setInterval(() => {
 				setCurrentStats((oldStats) => ({
 					rolls: oldStats.rolls,
-					time: Date.now() - startTime,
+					secondPassed: Date.now() - startTime,
 				}))
 			}, 100)
 		}
@@ -45,7 +48,7 @@ export default function App() {
 	React.useEffect(() => {
 		if (tenzies) {
 			let bestRolls = bestStats.rolls
-			let bestTime = bestStats.time
+			let bestTime = bestStats.secondPassed
 			let newBest = false
 			if (bestRolls === null && bestTime === null) {
 				newBest = true
@@ -53,7 +56,7 @@ export default function App() {
 				newBest = true
 			} else if (
 				bestRolls === currentStats.rolls &&
-				bestTime > currentStats.time
+				bestTime > currentStats.secondPassed
 			) {
 				newBest = true
 			}
@@ -87,7 +90,7 @@ export default function App() {
 	function resetGame() {
 		setTenzies(false)
 		setDice(allNewDice())
-		setCurrentStats({ rolls: 1, time: 0 })
+		setCurrentStats({ rolls: 1, secondPassed: 0 })
 		setNewBest(false)
 		setStartTime(Date.now())
 	}
@@ -101,7 +104,7 @@ export default function App() {
 			)
 			setCurrentStats((oldStats) => ({
 				rolls: oldStats.rolls + 1,
-				time: oldStats.time,
+				secondPassed: oldStats.secondPassed,
 			}))
 		} else if (firstStart) {
 			setFirstStart(false)

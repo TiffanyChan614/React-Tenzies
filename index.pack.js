@@ -436,13 +436,16 @@ function App() {
 
 	var _React$useState7 = _react2.default.useState({
 		rolls: null,
-		time: null
+		secondPassed: null
 	}),
 	    _React$useState8 = _slicedToArray(_React$useState7, 2),
 	    currentStats = _React$useState8[0],
 	    setCurrentStats = _React$useState8[1];
 
-	var _React$useState9 = _react2.default.useState(JSON.parse(localStorage.getItem('bestStats')) || { rolls: null, time: null }),
+	var _React$useState9 = _react2.default.useState(JSON.parse(localStorage.getItem('bestStats')) || {
+		rolls: null,
+		secondPassed: null
+	}),
 	    _React$useState10 = _slicedToArray(_React$useState9, 2),
 	    bestStats = _React$useState10[0],
 	    setBestStats = _React$useState10[1];
@@ -478,7 +481,7 @@ function App() {
 				setCurrentStats(function (oldStats) {
 					return {
 						rolls: oldStats.rolls,
-						time: Date.now() - startTime
+						secondPassed: Date.now() - startTime
 					};
 				});
 			}, 100);
@@ -492,13 +495,13 @@ function App() {
 	_react2.default.useEffect(function () {
 		if (tenzies) {
 			var bestRolls = bestStats.rolls;
-			var bestTime = bestStats.time;
+			var bestTime = bestStats.secondPassed;
 			var _newBest = false;
 			if (bestRolls === null && bestTime === null) {
 				_newBest = true;
 			} else if (bestRolls > currentStats.rolls) {
 				_newBest = true;
-			} else if (bestRolls === currentStats.rolls && bestTime > currentStats.time) {
+			} else if (bestRolls === currentStats.rolls && bestTime > currentStats.secondPassed) {
 				_newBest = true;
 			}
 			setNewBest(_newBest);
@@ -528,7 +531,7 @@ function App() {
 	function resetGame() {
 		setTenzies(false);
 		setDice(allNewDice());
-		setCurrentStats({ rolls: 1, time: 0 });
+		setCurrentStats({ rolls: 1, secondPassed: 0 });
 		setNewBest(false);
 		setStartTime(Date.now());
 	}
@@ -543,7 +546,7 @@ function App() {
 			setCurrentStats(function (oldStats) {
 				return {
 					rolls: oldStats.rolls + 1,
-					time: oldStats.time
+					secondPassed: oldStats.secondPassed
 				};
 			});
 		} else if (firstStart) {
@@ -798,12 +801,12 @@ function Stats(props) {
 				_react2.default.createElement(
 					'div',
 					null,
-					!props.currentStats.time ? '--' : (props.currentStats.time / 1000).toFixed(2) + 's'
+					!props.currentStats.secondPassed ? '--' : (props.currentStats.secondPassed / 1000).toFixed(2) + 's'
 				),
 				_react2.default.createElement(
 					'div',
 					null,
-					!props.bestStats.time ? '--' : (props.bestStats.time / 1000).toFixed(2) + 's'
+					!props.bestStats.secondPassed ? '--' : (props.bestStats.secondPassed / 1000).toFixed(2) + 's'
 				)
 			)
 		)

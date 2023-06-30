@@ -30,14 +30,14 @@ export default function Stats(props) {
 				</div>
 				<div className='numbers'>
 					<div>
-						{!props.currentStats.time
+						{!props.currentStats.secondPassed
 							? '--'
-							: `${(props.currentStats.time / 1000).toFixed(2)}s`}
+							: `${(props.currentStats.secondPassed / 1000).toFixed(2)}s`}
 					</div>
 					<div>
-						{!props.bestStats.time
+						{!props.bestStats.secondPassed
 							? '--'
-							: `${(props.bestStats.time / 1000).toFixed(2)}s`}
+							: `${(props.bestStats.secondPassed / 1000).toFixed(2)}s`}
 					</div>
 				</div>
 			</div>
