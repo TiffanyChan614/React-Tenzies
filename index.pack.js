@@ -424,25 +424,30 @@ function App() {
 	    dice = _React$useState2[0],
 	    setDice = _React$useState2[1];
 
-	var _React$useState3 = _react2.default.useState(false),
+	var _React$useState3 = _react2.default.useState(Date.now()),
 	    _React$useState4 = _slicedToArray(_React$useState3, 2),
-	    tenzies = _React$useState4[0],
-	    setTenzies = _React$useState4[1];
+	    startTime = _React$useState4[0],
+	    setStartTime = _React$useState4[1];
 
-	var _React$useState5 = _react2.default.useState({ rolls: 1, time: 0 }),
+	var _React$useState5 = _react2.default.useState(false),
 	    _React$useState6 = _slicedToArray(_React$useState5, 2),
-	    currentStats = _React$useState6[0],
-	    setCurrentStats = _React$useState6[1];
+	    tenzies = _React$useState6[0],
+	    setTenzies = _React$useState6[1];
 
-	var _React$useState7 = _react2.default.useState(JSON.parse(localStorage.getItem('bestStats')) || { rolls: null, time: null }),
+	var _React$useState7 = _react2.default.useState({ rolls: 1, time: 0 }),
 	    _React$useState8 = _slicedToArray(_React$useState7, 2),
-	    bestStats = _React$useState8[0],
-	    setBestStats = _React$useState8[1];
+	    currentStats = _React$useState8[0],
+	    setCurrentStats = _React$useState8[1];
 
-	var _React$useState9 = _react2.default.useState(false),
+	var _React$useState9 = _react2.default.useState(JSON.parse(localStorage.getItem('bestStats')) || { rolls: null, time: null }),
 	    _React$useState10 = _slicedToArray(_React$useState9, 2),
-	    newBest = _React$useState10[0],
-	    setNewBest = _React$useState10[1];
+	    bestStats = _React$useState10[0],
+	    setBestStats = _React$useState10[1];
+
+	var _React$useState11 = _react2.default.useState(false),
+	    _React$useState12 = _slicedToArray(_React$useState11, 2),
+	    newBest = _React$useState12[0],
+	    setNewBest = _React$useState12[1];
 
 	_react2.default.useEffect(function () {
 		var allHeld = dice.every(function (die) {
@@ -458,22 +463,26 @@ function App() {
 	}, [dice]);
 
 	_react2.default.useEffect(function () {
+		var intervalId = null;
+
 		if (!tenzies) {
-			setTimeout(function () {
+			intervalId = setInterval(function () {
 				setCurrentStats(function (oldStats) {
 					return {
 						rolls: oldStats.rolls,
-						time: oldStats.time + 100
+						time: Date.now() - startTime
 					};
 				});
 			}, 100);
 		}
-	}, [currentStats.time]);
+
+		return function () {
+			return clearInterval(intervalId);
+		};
+	}, [tenzies, startTime]);
 
 	_react2.default.useEffect(function () {
-		console.log('tenzies change to', tenzies);
 		if (tenzies) {
-			console.log('updating');
 			var bestRolls = bestStats.rolls;
 			var bestTime = bestStats.time;
 			var _newBest = false;
@@ -484,7 +493,6 @@ function App() {
 			} else if (bestRolls === currentStats.rolls && bestTime > currentStats.time) {
 				_newBest = true;
 			}
-			console.log('newBest', _newBest);
 			setNewBest(_newBest);
 			if (_newBest) {
 				localStorage.setItem('bestStats', JSON.stringify(Object.assign({}, currentStats)));

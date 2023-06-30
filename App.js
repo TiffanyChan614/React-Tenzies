@@ -6,6 +6,7 @@ import Stats from './Stats'
 
 export default function App() {
 	const [dice, setDice] = React.useState(allNewDice())
+	const [startTime, setStartTime] = React.useState(Date.now())
 	const [tenzies, setTenzies] = React.useState(false)
 	const [currentStats, setCurrentStats] = React.useState({ rolls: 1, time: 0 })
 	const [bestStats, setBestStats] = React.useState(
@@ -23,20 +24,22 @@ export default function App() {
 	}, [dice])
 
 	React.useEffect(() => {
+		let intervalId = null
+
 		if (!tenzies) {
-			setTimeout(() => {
+			intervalId = setInterval(() => {
 				setCurrentStats((oldStats) => ({
 					rolls: oldStats.rolls,
-					time: oldStats.time + 100,
+					time: Date.now() - startTime,
 				}))
 			}, 100)
 		}
-	}, [currentStats.time])
+
+		return () => clearInterval(intervalId)
+	}, [tenzies, startTime])
 
 	React.useEffect(() => {
-		console.log('tenzies change to', tenzies)
 		if (tenzies) {
-			console.log('updating')
 			let bestRolls = bestStats.rolls
 			let bestTime = bestStats.time
 			let newBest = false
@@ -50,7 +53,6 @@ export default function App() {
 			) {
 				newBest = true
 			}
-			console.log('newBest', newBest)
 			setNewBest(newBest)
 			if (newBest) {
 				localStorage.setItem(
