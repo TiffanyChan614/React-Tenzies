@@ -13,8 +13,8 @@ export default function Stats(props) {
 					</div>
 				</div>
 				<div className='numbers'>
-					<div>{props.currentRolls}</div>
-					<div>{!props.bestRolls ? '--' : props.bestRolls}</div>
+					<div>{props.currentStats.rolls}</div>
+					<div>{!props.bestStats.rolls ? '--' : props.bestStats.rolls}</div>
 				</div>
 			</div>
 			<div className='stats-time'>
@@ -27,9 +27,11 @@ export default function Stats(props) {
 					</div>
 				</div>
 				<div className='numbers'>
-					<div>{(props.currentTime / 1000).toFixed(2)}s</div>
+					<div>{(props.currentStats.time / 1000).toFixed(2)}s</div>
 					<div>
-						{!props.bestTime ? '--' : `${(props.bestTime / 1000).toFixed(2)}s`}
+						{!props.bestStats.time
+							? '--'
+							: `${(props.bestStats.time / 1000).toFixed(2)}s`}
 					</div>
 				</div>
 			</div>

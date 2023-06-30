@@ -7,14 +7,11 @@ import Stats from './Stats'
 export default function App() {
 	const [dice, setDice] = React.useState(allNewDice())
 	const [tenzies, setTenzies] = React.useState(false)
-	const [rolls, setRolls] = React.useState(1)
-	const [time, setTime] = React.useState(0)
-	const [bestRolls, setBestRolls] = React.useState(
-		Number(localStorage.getItem('bestRoll')) || null
-	)
-	const [bestTime, setBestTime] = React.useState(
-		Number(localStorage.getItem('bestTime')) || null
-	)
+	const [currentStats, setCurrentStats] = React.useState({ rolls: 1, time: 0 })
+	const [bestStats, setBestStats] = React.useState({
+		rolls: Number(localStorage.getItem('bestRoll')) || null,
+		time: Number(localStorage.getItem('bestTime')) || null,
+	})
 
 	React.useEffect(() => {
 		const allHeld = dice.every((die) => die.isHeld)
@@ -28,10 +25,13 @@ export default function App() {
 	React.useEffect(() => {
 		if (!tenzies) {
 			setTimeout(() => {
-				setTime((oldTime) => oldTime + 100)
+				setCurrentStats((oldStats) => ({
+					rolls: oldStats.rolls,
+					time: oldStats.time + 100,
+				}))
 			}, 100)
 		}
-	}, [time])
+	}, [currentStats.time])
 
 	function generateNewDie() {
 		return {
@@ -56,20 +56,27 @@ export default function App() {
 					return die.isHeld ? die : generateNewDie()
 				})
 			)
-			setRolls((oldRoll) => oldRoll + 1)
+			setCurrentStats((oldStats) => ({
+				rolls: oldStats.rolls + 1,
+				time: oldStats.time,
+			}))
 		} else {
-			if (bestRolls === null || rolls < bestRolls) {
-				localStorage.setItem('bestRolls', rolls)
-				setBestRolls(rolls)
+			let bestRolls = bestStats.rolls
+			let bestTime = bestStats.time
+			if (bestRolls === null || currentStats.rolls < bestRolls) {
+				bestRolls = currentStats.rolls
 			}
-			if (bestTime === null || time < bestTime) {
-				localStorage.setItem('bestTime', time)
-				setBestTime(time)
+			if (bestTime === null || currentStats.time < bestTime) {
+				bestTime = currentStats.time
 			}
+
+			const newBestStats = { rolls: bestRolls, time: bestTime }
+			localStorage.setItem('bestStats', newBestStats)
+			setBestStats(newBestStats)
+
 			setTenzies(false)
 			setDice(allNewDice())
-			setRolls(1)
-			setTime(0)
+			setCurrentStats({ rolls: 1, time: 0 })
 		}
 	}
 
@@ -101,10 +108,8 @@ export default function App() {
 				current value between rolls.
 			</p>
 			<Stats
-				currentRolls={rolls}
-				currentTime={time}
-				bestRolls={bestRolls}
-				bestTime={bestTime}
+				currentStats={currentStats}
+				bestStats={bestStats}
 			/>
 			<div className='dice-container'>{diceElements}</div>
 			<button
