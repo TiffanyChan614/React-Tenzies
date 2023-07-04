@@ -7,7 +7,7 @@ The objective of the game is to roll the dice until all of them show the same va
 
 ## Live Demo
 
-You can try the game [here](https://tenzies123.netlify.app/).
+You can try the game [here](https://tiffanychan614.github.io/React-Tenzies/).
 
 ## Built with
 
