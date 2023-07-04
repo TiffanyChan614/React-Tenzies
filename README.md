@@ -52,4 +52,4 @@ You can try the game [here](https://tiffanychan614.github.io/React-Tenzies/).
 ## Future Improvements
 
 - Replace the number on the dice with dots
-- Add shadow to the dice when they are being clicked
+- --Add inset shadow to the dice when they are being clicked--

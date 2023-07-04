@@ -573,7 +573,7 @@ function App() {
 			holdDice: function holdDice() {
 				return _holdDice(die.id);
 			},
-			active: !firstStart
+			active: !firstStart && !tenzies
 		});
 	});
 

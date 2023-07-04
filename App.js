@@ -130,7 +130,7 @@ export default function App() {
 			value={die.value}
 			isHeld={die.isHeld}
 			holdDice={() => holdDice(die.id)}
-			active={!firstStart}
+			active={!firstStart && !tenzies}
 		/>
 	))
 
