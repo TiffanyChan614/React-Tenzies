@@ -51,5 +51,6 @@ You can try the game [here](https://tiffanychan614.github.io/React-Tenzies/).
 
 ## Future Improvements
 
-- --Replace the number on the dice with dots--
-- --Add inset shadow to the dice when they are being clicked--
+- ~~Replace the number on the dice with dots~~
+- ~~Add inset shadow to the dice when they are being clicked~~
+- Add a button for user to clear best record
