@@ -691,20 +691,36 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function Die(props) {
 	var styles = {
-		backgroundColor: props.isHeld && props.active ? '#59E391' : 'white'
+		backgroundColor: props.isHeld ? '#59E391' : 'white',
+		cursor: props.active ? 'pointer' : 'default'
 	};
+
+	var dieDots = [[0, 0, 0, 0, 1, 0, 0, 0, 0], [0, 0, 0, 1, 0, 1, 0, 0, 0], [1, 0, 0, 0, 1, 0, 0, 0, 1], [1, 0, 1, 0, 0, 0, 1, 0, 1], [1, 0, 1, 0, 1, 0, 1, 0, 1], [1, 0, 1, 1, 0, 1, 1, 0, 1]];
+
+	var dotStyle = function dotStyle(dot) {
+		if (dot && props.isHeld) {
+			return { backgroundColor: 'white' };
+		} else if (dot) {
+			return { backgroundColor: 'black' };
+		} else {
+			return { backgroundColor: 'transparent' };
+		}
+	};
+
+	var dieDotsElements = dieDots[props.value - 1].map(function (dot, index) {
+		return _react2.default.createElement('div', {
+			key: index,
+			className: 'die-dot',
+			style: dotStyle(dot) });
+	});
 
 	return _react2.default.createElement(
 		'div',
 		{
-			className: props.active ? 'die-face active' : 'die-face',
+			className: 'die-face ' + (props.active ? 'active' : '') + ' ' + (props.isHeld ? 'held' : ''),
 			style: styles,
 			onClick: props.holdDice },
-		_react2.default.createElement(
-			'h2',
-			{ className: 'die-num' },
-			props.value
-		)
+		dieDotsElements
 	);
 }
 
