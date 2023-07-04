@@ -5,7 +5,7 @@ import Confetti from 'react-confetti'
 import Stats from './Stats'
 
 export default function App() {
-	const [dice, setDice] = React.useState(allNewDice())
+	const [dice, setDice] = React.useState(allNewDice(false))
 	const [startTime, setStartTime] = React.useState(null)
 	const [tenzies, setTenzies] = React.useState(false)
 	const [currentStats, setCurrentStats] = React.useState({
@@ -19,7 +19,7 @@ export default function App() {
 		}
 	)
 	const [newBest, setNewBest] = React.useState(false)
-	const [firstStart, setFirstStart] = React.useState(true)
+	const [gameInProgress, setGameInProgress] = React.useState(false)
 
 	React.useEffect(() => {
 		const allHeld = dice.every((die) => die.isHeld)
@@ -33,7 +33,7 @@ export default function App() {
 	React.useEffect(() => {
 		let intervalId = null
 
-		if (!tenzies && !firstStart) {
+		if (!tenzies && gameInProgress) {
 			intervalId = setInterval(() => {
 				setCurrentStats((oldStats) => ({
 					rolls: oldStats.rolls,
@@ -68,48 +68,51 @@ export default function App() {
 				)
 				setBestStats(Object.assign({}, currentStats))
 			}
+			setGameInProgress(false)
+			setDice((oldDice) =>
+				oldDice.map((die) => Object.assign({}, die, { isActive: false }))
+			)
 		}
 	}, [tenzies])
 
-	function generateNewDie() {
+	function generateNewDie(activeVal) {
 		return {
 			value: Math.ceil(Math.random() * 6),
 			isHeld: false,
+			isActive: activeVal,
 			id: nanoid(),
 		}
 	}
 
-	function allNewDice() {
+	function allNewDice(activeVal) {
 		const newDice = []
 		for (let i = 0; i < 10; i++) {
-			newDice.push(generateNewDie())
+			newDice.push(generateNewDie(activeVal))
 		}
 		return newDice
 	}
 
 	function resetGame() {
 		setTenzies(false)
-		setDice(allNewDice())
 		setCurrentStats({ rolls: 1, secondPassed: 0 })
 		setNewBest(false)
 		setStartTime(Date.now())
 	}
 
 	function rollDice() {
-		if (!tenzies && !firstStart) {
+		if (gameInProgress) {
 			setDice((oldDice) =>
 				oldDice.map((die) => {
-					return die.isHeld ? die : generateNewDie()
+					return die.isHeld ? die : generateNewDie(true)
 				})
 			)
 			setCurrentStats((oldStats) => ({
 				rolls: oldStats.rolls + 1,
 				secondPassed: oldStats.secondPassed,
 			}))
-		} else if (firstStart) {
-			setFirstStart(false)
-			resetGame()
-		} else {
+		} else if (!gameInProgress) {
+			setDice(allNewDice(true))
+			setGameInProgress(true)
 			resetGame()
 		}
 	}
@@ -117,7 +120,7 @@ export default function App() {
 	function holdDice(id) {
 		setDice((oldDice) =>
 			oldDice.map((die) => {
-				return die.id === id
+				return die.id === id && die.isActive
 					? Object.assign({}, die, { isHeld: !die.isHeld })
 					: die
 			})
@@ -130,13 +133,13 @@ export default function App() {
 			value={die.value}
 			isHeld={die.isHeld}
 			holdDice={() => holdDice(die.id)}
-			active={!firstStart && !tenzies}
+			active={die.isActive}
 		/>
 	))
 
 	let buttonText = ''
 
-	if (firstStart) {
+	if (!gameInProgress && !tenzies) {
 		buttonText = 'Start'
 	} else if (tenzies) {
 		buttonText = 'New Game'

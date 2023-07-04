@@ -419,7 +419,7 @@ var _Stats2 = _interopRequireDefault(_Stats);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function App() {
-	var _React$useState = _react2.default.useState(allNewDice()),
+	var _React$useState = _react2.default.useState(allNewDice(false)),
 	    _React$useState2 = _slicedToArray(_React$useState, 2),
 	    dice = _React$useState2[0],
 	    setDice = _React$useState2[1];
@@ -455,10 +455,10 @@ function App() {
 	    newBest = _React$useState12[0],
 	    setNewBest = _React$useState12[1];
 
-	var _React$useState13 = _react2.default.useState(true),
+	var _React$useState13 = _react2.default.useState(false),
 	    _React$useState14 = _slicedToArray(_React$useState13, 2),
-	    firstStart = _React$useState14[0],
-	    setFirstStart = _React$useState14[1];
+	    gameInProgress = _React$useState14[0],
+	    setGameInProgress = _React$useState14[1];
 
 	_react2.default.useEffect(function () {
 		var allHeld = dice.every(function (die) {
@@ -476,7 +476,7 @@ function App() {
 	_react2.default.useEffect(function () {
 		var intervalId = null;
 
-		if (!tenzies && !firstStart) {
+		if (!tenzies && gameInProgress) {
 			intervalId = setInterval(function () {
 				setCurrentStats(function (oldStats) {
 					return {
@@ -509,38 +509,44 @@ function App() {
 				localStorage.setItem('bestStats', JSON.stringify(Object.assign({}, currentStats)));
 				setBestStats(Object.assign({}, currentStats));
 			}
+			setGameInProgress(false);
+			setDice(function (oldDice) {
+				return oldDice.map(function (die) {
+					return Object.assign({}, die, { isActive: false });
+				});
+			});
 		}
 	}, [tenzies]);
 
-	function generateNewDie() {
+	function generateNewDie(activeVal) {
 		return {
 			value: Math.ceil(Math.random() * 6),
 			isHeld: false,
+			isActive: activeVal,
 			id: (0, _nanoid.nanoid)()
 		};
 	}
 
-	function allNewDice() {
+	function allNewDice(activeVal) {
 		var newDice = [];
 		for (var i = 0; i < 10; i++) {
-			newDice.push(generateNewDie());
+			newDice.push(generateNewDie(activeVal));
 		}
 		return newDice;
 	}
 
 	function resetGame() {
 		setTenzies(false);
-		setDice(allNewDice());
 		setCurrentStats({ rolls: 1, secondPassed: 0 });
 		setNewBest(false);
 		setStartTime(Date.now());
 	}
 
 	function rollDice() {
-		if (!tenzies && !firstStart) {
+		if (gameInProgress) {
 			setDice(function (oldDice) {
 				return oldDice.map(function (die) {
-					return die.isHeld ? die : generateNewDie();
+					return die.isHeld ? die : generateNewDie(true);
 				});
 			});
 			setCurrentStats(function (oldStats) {
@@ -549,10 +555,9 @@ function App() {
 					secondPassed: oldStats.secondPassed
 				};
 			});
-		} else if (firstStart) {
-			setFirstStart(false);
-			resetGame();
-		} else {
+		} else if (!gameInProgress) {
+			setDice(allNewDice(true));
+			setGameInProgress(true);
 			resetGame();
 		}
 	}
@@ -560,7 +565,7 @@ function App() {
 	function _holdDice(id) {
 		setDice(function (oldDice) {
 			return oldDice.map(function (die) {
-				return die.id === id ? Object.assign({}, die, { isHeld: !die.isHeld }) : die;
+				return die.id === id && die.isActive ? Object.assign({}, die, { isHeld: !die.isHeld }) : die;
 			});
 		});
 	}
@@ -573,13 +578,13 @@ function App() {
 			holdDice: function holdDice() {
 				return _holdDice(die.id);
 			},
-			active: !firstStart && !tenzies
+			active: die.isActive
 		});
 	});
 
 	var buttonText = '';
 
-	if (firstStart) {
+	if (!gameInProgress && !tenzies) {
 		buttonText = 'Start';
 	} else if (tenzies) {
 		buttonText = 'New Game';
@@ -692,7 +697,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function Die(props) {
 	var styles = {
 		backgroundColor: props.isHeld ? '#59E391' : 'white',
-		cursor: props.active ? 'pointer' : 'default'
+		cursor: props.isActive ? 'pointer' : 'default'
 	};
 
 	var dieDots = [[0, 0, 0, 0, 1, 0, 0, 0, 0], [0, 0, 0, 1, 0, 1, 0, 0, 0], [1, 0, 0, 0, 1, 0, 0, 0, 1], [1, 0, 1, 0, 0, 0, 1, 0, 1], [1, 0, 1, 0, 1, 0, 1, 0, 1], [1, 0, 1, 1, 0, 1, 1, 0, 1]];
@@ -717,7 +722,7 @@ function Die(props) {
 	return _react2.default.createElement(
 		'div',
 		{
-			className: 'die-face ' + (props.active ? 'active' : '') + ' ' + (props.isHeld ? 'held' : ''),
+			className: 'die-face ' + (props.isActive ? 'active' : '') + ' ' + (props.isHeld ? 'held' : ''),
 			style: styles,
 			onClick: props.holdDice },
 		dieDotsElements

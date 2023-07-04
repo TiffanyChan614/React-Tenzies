@@ -3,7 +3,7 @@ import React from 'react'
 export default function Die(props) {
 	const styles = {
 		backgroundColor: props.isHeld ? '#59E391' : 'white',
-		cursor: props.active ? 'pointer' : 'default',
+		cursor: props.isActive ? 'pointer' : 'default',
 	}
 
 	const dieDots = [
@@ -34,7 +34,7 @@ export default function Die(props) {
 
 	return (
 		<div
-			className={`die-face ${props.active ? 'active' : ''} ${
+			className={`die-face ${props.isActive ? 'active' : ''} ${
 				props.isHeld ? 'held' : ''
 			}`}
 			style={styles}
