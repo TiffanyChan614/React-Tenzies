@@ -45,29 +45,31 @@ export default function App() {
 		return () => clearInterval(intervalId)
 	}, [tenzies, startTime])
 
+	function updateStats() {
+		let newBest = false
+		if (bestStats.rolls === null && bestStats.secondPassed === null) {
+			newBest = true
+		} else if (bestStats.rolls > currentStats.rolls) {
+			newBest = true
+		} else if (
+			bestStats.rolls === currentStats.rolls &&
+			bestStats.secondPassed > currentStats.secondPassed
+		) {
+			newBest = true
+		}
+		setNewBest(newBest)
+		if (newBest) {
+			localStorage.setItem(
+				'bestStats',
+				JSON.stringify(Object.assign({}, currentStats))
+			)
+			setBestStats(Object.assign({}, currentStats))
+		}
+	}
+
 	React.useEffect(() => {
 		if (tenzies) {
-			let bestRolls = bestStats.rolls
-			let bestTime = bestStats.secondPassed
-			let newBest = false
-			if (bestRolls === null && bestTime === null) {
-				newBest = true
-			} else if (bestRolls > currentStats.rolls) {
-				newBest = true
-			} else if (
-				bestRolls === currentStats.rolls &&
-				bestTime > currentStats.secondPassed
-			) {
-				newBest = true
-			}
-			setNewBest(newBest)
-			if (newBest) {
-				localStorage.setItem(
-					'bestStats',
-					JSON.stringify(Object.assign({}, currentStats))
-				)
-				setBestStats(Object.assign({}, currentStats))
-			}
+			updateStats()
 			setGameInProgress(false)
 			setDice((oldDice) =>
 				oldDice.map((die) => Object.assign({}, die, { isActive: false }))

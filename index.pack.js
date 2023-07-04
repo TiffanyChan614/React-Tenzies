@@ -492,23 +492,25 @@ function App() {
 		};
 	}, [tenzies, startTime]);
 
+	function updateStats() {
+		var newBest = false;
+		if (bestStats.rolls === null && bestStats.secondPassed === null) {
+			newBest = true;
+		} else if (bestStats.rolls > currentStats.rolls) {
+			newBest = true;
+		} else if (bestStats.rolls === currentStats.rolls && bestStats.secondPassed > currentStats.secondPassed) {
+			newBest = true;
+		}
+		setNewBest(newBest);
+		if (newBest) {
+			localStorage.setItem('bestStats', JSON.stringify(Object.assign({}, currentStats)));
+			setBestStats(Object.assign({}, currentStats));
+		}
+	}
+
 	_react2.default.useEffect(function () {
 		if (tenzies) {
-			var bestRolls = bestStats.rolls;
-			var bestTime = bestStats.secondPassed;
-			var _newBest = false;
-			if (bestRolls === null && bestTime === null) {
-				_newBest = true;
-			} else if (bestRolls > currentStats.rolls) {
-				_newBest = true;
-			} else if (bestRolls === currentStats.rolls && bestTime > currentStats.secondPassed) {
-				_newBest = true;
-			}
-			setNewBest(_newBest);
-			if (_newBest) {
-				localStorage.setItem('bestStats', JSON.stringify(Object.assign({}, currentStats)));
-				setBestStats(Object.assign({}, currentStats));
-			}
+			updateStats();
 			setGameInProgress(false);
 			setDice(function (oldDice) {
 				return oldDice.map(function (die) {
