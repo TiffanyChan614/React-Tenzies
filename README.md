@@ -2,7 +2,7 @@
 
 ## Description
 
-This is the capstone project of the of the [React course by Bob Ziroll on Scrimba](https://scrimba.com/learn/learnreact). I added a few [features](#features) on top of the original project.
+This is the capstone project of the [React course by Bob Ziroll on Scrimba](https://scrimba.com/learn/learnreact). I added a few [features](#features) on top of the original project.
 The objective of the game is to roll the dice until all of them show the same value. You can click on individual dice to hold them at their current value while rolling the rest. The game keeps track of the number of rolls and the time taken to achieve Tenzies.
 
 ## Live Demo
