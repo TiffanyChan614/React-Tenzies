@@ -92,3 +92,7 @@ npm run dev
 - ~~Replace the number on the dice with dots~~
 - ~~Add inset shadow to the dice when they are being clicked~~
 - Add a button for user to clear best record
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
