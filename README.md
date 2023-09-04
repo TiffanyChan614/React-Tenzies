@@ -5,9 +5,52 @@
 This is the capstone project of the [React course by Bob Ziroll on Scrimba](https://scrimba.com/learn/learnreact). I added a few [features](#features) on top of the original project.
 The objective of the game is to roll the dice until all of them show the same value. You can click on individual dice to hold them at their current value while rolling the rest. The game keeps track of the number of rolls and the time taken to achieve Tenzies.
 
+## Screenshots
+
+![Tenzies Start](./screenshots/tenziesStart.png)
+![Tenzies Win](./screenshots/tenziesWin.png)
+
 ## Live Demo
 
 You can try the game [here](https://tiffanychan614.github.io/React-Tenzies/).
+
+## Dependencies
+
+- [React](https://reactjs.org/) (v17.0.2): A JavaScript library for building user interfaces.
+- [React DOM](https://reactjs.org/docs/react-dom.html) (v17.0.2): A package for working with the DOM in React applications.
+- [nanoid](https://www.npmjs.com/package/nanoid) (v3.1.28): A tiny, secure, URL-friendly, unique string ID generator for JavaScript.
+- [react-confetti](https://www.npmjs.com/package/react-confetti) (v6.0.1): A React component for creating confetti animations.
+
+## Dev Dependencies
+
+- [webpack](https://webpack.js.org/) (^2.0): A static module bundler for JavaScript applications.
+- [Babel Core](https://babeljs.io/docs/en/babel-core) (^6.0): The core of the Babel compiler.
+- [Babel Loader](https://webpack.js.org/loaders/babel-loader/) (^7.0): A loader for using Babel with Webpack.
+- [Babel Preset Env](https://babeljs.io/docs/en/babel-preset-env) (*): A Babel preset for compiling modern JavaScript down to ES5 based on your target environments.
+- [Babel Preset React](https://babeljs.io/docs/en/babel-preset-react) (*): A Babel preset for transforming JSX into JavaScript.
+
+## Run Locally
+```bash
+git clone https://github.com/TiffanyChan614/React-Tenzies
+```
+
+Go to the project directory
+
+```bash
+cd React-Tenzies
+```
+
+Install dependencies
+
+```bash
+npm install
+```
+
+Start the server
+
+```bash
+npm run dev
+```
 
 ## Built with
 
@@ -24,11 +67,6 @@ You can try the game [here](https://tiffanychan614.github.io/React-Tenzies/).
 - Display 'New Best!' message when you beat your previous best
 - Time won't start and dice will be disabled until you make your first roll
 - New set of dice will be rolled whenever you press 'Start' to ensure fairness (different from the initial set shown when you first load the application)
-
-## Screenshots
-
-![Tenzies Start](./screenshots/tenziesStart.png)
-![Tenzies Win](./screenshots/tenziesWin.png)
 
 ## Usage
 
